@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
 //students
 Route::prefix('/students')->group(function() {
     Route::get('/',[StudentController::class,'index'])->name('students');
+    Route::post('/add',[StudentController::class,'store'])->name('students.add');
 });
 
 require __DIR__.'/auth.php';

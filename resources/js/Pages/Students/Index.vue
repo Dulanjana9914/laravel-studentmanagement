@@ -1,17 +1,53 @@
-<script setup>
+<script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3'
+
+export default {
+
+components: {
+    AuthenticatedLayout
+
+},
+
+  props: {
+        students: Array,
+
+  },
+
+  data(){
+        return{
+              student:{
+                    name:'',
+                    age:'',
+                    image:'',
+              }
+        }
+  },
+
+  methods:
+  {
+        submit()
+        {
+              router.post(route('students.add'), this.student);
+        }
+
+  }
+
+
+}
 </script>
 
 <template>
     <Head title="Students" />
-
     <AuthenticatedLayout>
         <template #header>
             <h2 class="text-xl font-semibold leading-tight text-gray-800">Students</h2>
             <div class="container">
                 <div class="row">
-                    <form>
+
+                    <!-- Add Student -->
+                    <form @submit.prevent="submit">
                         <div class="space-y-12">
                             <div class="pb-12 border-b border-gray-900/10">
                                 <div class="grid grid-cols-1 mt-10 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -21,9 +57,9 @@ import { Head, Link } from '@inertiajs/vue3';
                                         <div class="mt-2">
                                             <div
                                                 class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                                                <input type="text" name="name" id="name"
+                                                <input type="text" name="name" id="name" autocomplete="name"
                                                     class="block flex-1 border-0 bg-transparent py-1.5 pl-2 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                                                    placeholder="Student's Name" />
+                                                    placeholder="Student's Name" v-model="student.name" />
                                             </div>
                                         </div>
                                     </div>
@@ -35,24 +71,27 @@ import { Head, Link } from '@inertiajs/vue3';
                                                 class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                                                 <input type="number" name="age" id="age"
                                                     class="block flex-1 border-0 bg-transparent py-1.5 pl-2 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                                                    placeholder="Student's Age" />
+                                                    placeholder="Student's Age" v-model="student.age"/>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="max-w-sm max-h-30 col-span-full">
-                                        <label for="cover-photo"
+                                        <label for="file-upload"
                                             class="block text-sm font-medium leading-6 text-gray-900">Add Image</label>
+                                            <input name="image" @input="student.image= $event.target.files[0]" v-models="student.image" id="formFileSm" type="file">
+
+                                            <input id="file-upload" name="file-upload" type="file" class="sr-only" />
                                         <div
                                             class="flex justify-center px-6 py-10 mt-2 border border-dashed rounded-lg border-gray-900/25">
+
                                             <div class="text-center">
-                                                <PhotoIcon class="w-12 h-12 mx-auto text-gray-300" aria-hidden="false" />
+
                                                 <div class="flex mt-4 text-sm leading-6 text-gray-600">
                                                     <label for="file-upload"
                                                         class="relative font-semibold text-indigo-600 bg-white rounded-md cursor-pointer focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
-                                                        <span>Upload a file</span>
-                                                        <input id="file-upload" name="file-upload" type="file"
-                                                            class="sr-only" />
+                                                        <span>Click Here to Upload a file</span>
+
                                                     </label>
                                                     <p class="pl-1 ml-1">or drag and drop</p>
                                                 </div>
@@ -60,16 +99,21 @@ import { Head, Link } from '@inertiajs/vue3';
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
-                                            <button type="submit" class="pt-2 pb-2 pl-3 pr-3 mt-3 font-bold text-white bg-green-600 border border-green-600 rounded">Add Student</button>
-                                      </div>
+                                            <button type="submit"
+                                                class="pt-2 pb-2 pl-3 pr-3 mt-3 font-bold text-white bg-green-600 border border-green-600 rounded">Add
+                                                Student</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </form>
+                    <!-- End of Add Student -->
 
-                    <div class="py-12">
-                        <h1 class="flex justify-center mb-8 font-extrabold">All Students </h1>
+                    <!-- Display All Students -->
+
+                    <div class="py-4">
+                        <h1 class="flex justify-center mb-8 text-xl font-extrabold">All Students </h1>
                         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                             <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                                 <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -95,7 +139,7 @@ import { Head, Link } from '@inertiajs/vue3';
                                                     </th>
                                                     <th scope="col"
                                                         class="px-6 py-3 text-xs font-medium tracking-wide text-left text-gray-500 uppercase">
-                                                        Actions
+                                                        Actions for student acoounts
                                                     </th>
                                                 </tr>
                                             </thead>
@@ -130,12 +174,12 @@ import { Head, Link } from '@inertiajs/vue3';
                                                     <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                                                         <div class="flex">
                                                             <button type="button"
-                                                                class="px-3 py-1 mr-2 text-indigo-600 border border-indigo-600 rounded hover:text-indigo-900">
-                                                                Edit
+                                                                class="px-3 py-1 mr-2 text-yellow-600 border border-yellow-600 rounded hover:text-yellow-700">
+                                                                Change Status
                                                             </button>
                                                             <button type="button"
-                                                                class="px-3 py-1 mr-2 text-yellow-500 border border-yellow-500 rounded text--600 hover:text-yellow-700">
-                                                                Change Status
+                                                                class="px-3 py-1 mr-2 text-indigo-600 border border-indigo-600 rounded hover:text-indigo-900">
+                                                                Edit
                                                             </button>
                                                             <button type="button"
                                                                 class="px-3 py-1 text-red-600 border border-red-600 rounded hover:text-red-900">
@@ -151,14 +195,19 @@ import { Head, Link } from '@inertiajs/vue3';
                             </div>
                         </div>
                     </div>
+                    <!-- End of Display All Students -->
+
                 </div>
             </div>
         </template>
-</AuthenticatedLayout></template>
-<style>.bg-gradient-to-b {
+    </AuthenticatedLayout>
+</template>
+<style>
+.bg-gradient-to-b {
     background-image: linear-gradient(to bottom, rgba(103, 58, 183, 1), rgba(233, 30, 99, 1), rgba(255, 0, 0, 1));
 }
 
 .dark\:bg-gradient-to-b {
     background-image: linear-gradient(to bottom, rgba(39, 39, 39, 1), rgba(17, 17, 17, 1), rgba(0, 0, 0, 1));
-}</style>
+}
+</style>
