@@ -26,11 +26,16 @@ class StudentController extends Controller
 
     public function store(Request $request)
     {
-        Student::create([
-          'name' => $request->name,
-          'age' => $request->age,
-          'image'=> $request->image->store('images','public'),
-        ]);
+        $data = [
+            'name' => $request->name,
+            'age' => $request->age,
+        ];
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->image->store('images', 'public');
+        }
+
+        Student::create($data);
 
         return back();
     }

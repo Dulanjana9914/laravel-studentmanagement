@@ -5,34 +5,37 @@ import { router } from '@inertiajs/vue3'
 
 export default {
 
-components: {
-    AuthenticatedLayout
+    components: {
+        AuthenticatedLayout
 
-},
+    },
 
-  props: {
+    props: {
         students: Array,
 
-  },
+    },
 
-  data(){
-        return{
-              student:{
-                    name:'',
-                    age:'',
-                    image:'',
-              }
+    data() {
+        return {
+            student: {
+                name: '',
+                age: '',
+                image: '',
+            }
         }
-  },
+    },
 
-  methods:
-  {
-        submit()
-        {
-              router.post(route('students.add'), this.student);
+    methods:
+    {
+        submit() {
+            router.post(route('students.add'), this.student);
+
+            this.student.name = '';
+            this.student.age = '';
+            this.student.image = '';
         }
 
-  }
+    }
 
 
 }
@@ -57,7 +60,7 @@ components: {
                                         <div class="mt-2">
                                             <div
                                                 class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                                                <input type="text" name="name" id="name" autocomplete="name"
+                                                <input type="text" name="name" id="name" autocomplete="name" required="true"
                                                     class="block flex-1 border-0 bg-transparent py-1.5 pl-2 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                                                     placeholder="Student's Name" v-model="student.name" />
                                             </div>
@@ -69,33 +72,28 @@ components: {
                                         <div class="mt-2">
                                             <div
                                                 class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                                                <input type="number" name="age" id="age"
+                                                <input type="number" name="age" id="age" required="true"
                                                     class="block flex-1 border-0 bg-transparent py-1.5 pl-2 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                                                    placeholder="Student's Age" v-model="student.age"/>
+                                                    placeholder="Student's Age" v-model="student.age" />
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="max-w-sm max-h-30 col-span-full">
                                         <label for="file-upload"
                                             class="block text-sm font-medium leading-6 text-gray-900">Add Image</label>
-                                            <input name="image" @input="student.image= $event.target.files[0]" v-models="student.image" id="formFileSm" type="file">
-
-                                            <input id="file-upload" name="file-upload" type="file" class="sr-only" />
+                                        <input id="file-upload" name="file-upload"
+                                            @input="student.image = $event.target.files[0]" v-models="student.image"
+                                            type="file" class="sr-only" />
                                         <div
                                             class="flex justify-center px-6 py-10 mt-2 border border-dashed rounded-lg border-gray-900/25">
-
                                             <div class="text-center">
-
                                                 <div class="flex mt-4 text-sm leading-6 text-gray-600">
                                                     <label for="file-upload"
                                                         class="relative font-semibold text-indigo-600 bg-white rounded-md cursor-pointer focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
-                                                        <span>Click Here to Upload a file</span>
-
+                                                        <span>Click Here to Upload an image</span>
                                                     </label>
-                                                    <p class="pl-1 ml-1">or drag and drop</p>
                                                 </div>
-                                                <p class="mt-1 text-xs leading-5 text-gray-600">PNG, JPG up to 10MB</p>
+                                                <p class="mt-1 text-xs leading-5 text-gray-600">PNG,JPEG or JPG </p>
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
@@ -123,6 +121,10 @@ components: {
                                                 <tr>
                                                     <th scope="col"
                                                         class="px-6 py-3 text-xs font-medium tracking-wide text-left text-gray-500 uppercase">
+                                                        ID
+                                                    </th>
+                                                    <th scope="col"
+                                                        class="px-6 py-3 text-xs font-medium tracking-wide text-left text-gray-500 uppercase">
                                                         Name
                                                     </th>
                                                     <th scope="col"
@@ -144,31 +146,25 @@ components: {
                                                 </tr>
                                             </thead>
                                             <tbody class="bg-white divide-y divide-gray-200">
-                                                <tr>
+                                                <tr v-for="student in students">
+                                                    <th scope="row">{{ student.id }}</th>
                                                     <td class="px-6 py-4 whitespace-nowrap">
                                                         <div class="flex items-center">
                                                             <div class="ml-4">
-                                                                <div class="text-sm font-medium text-gray-900">John Doe
+                                                                <div class="text-sm font-medium text-gray-900">{{
+                                                                    student.name }}
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </td>
+                                                    <td>{{ student.image }}</td>
                                                     <td class="px-6 py-4 whitespace-nowrap">
-                                                        <div class="flex items-center">
-                                                            <div class="flex-shrink-0 w-10 h-10">
-                                                                <img class="w-10 h-10 rounded-full"
-                                                                    src="https://gdm-catalog-fmapi-prod.imgix.net/ProductLogo/6565bd61-0fe6-459e-9ae4-69ead84c1fc4.png"
-                                                                    alt="Picture">
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap">
-                                                        <div class="text-sm text-gray-900">25</div>
+                                                        <div class="text-sm text-gray-900">{{ student.age }}</div>
                                                     </td>
                                                     <td class="px-6 py-4 whitespace-nowrap">
                                                         <span
                                                             class="inline-flex px-2 text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full">
-                                                            Active
+                                                            {{ student.status }}
                                                         </span>
                                                     </td>
                                                     <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
