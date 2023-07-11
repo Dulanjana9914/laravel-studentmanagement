@@ -4,10 +4,10 @@ namespace Infrastructure;
 use App\Models\Image;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
-use Infrastructure\Facade\FileFacade;
+use infrastructure\Facades\FileFacade;
 use Intervention\Image\ImageManager;
 
-class ImageService
+class Images
 {
 
     protected $image_path;
@@ -123,7 +123,7 @@ class ImageService
     public function downloadImage($contents, $thumb_sizes)
     {
 
-        $new_image_name = FileFacade::makeName() . ".jpg";
+        $new_image_name = Facades\FileFacade::makeName() . ".jpg";
 
         //Store in the filesystem
         FileFacade::storeFile($contents, $new_image_name, $this->image_path, "w");

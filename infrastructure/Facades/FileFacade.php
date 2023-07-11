@@ -1,8 +1,8 @@
 <?php
 
-namespace infrastructure\Facade;
+namespace infrastructure\Facades;
 use Illuminate\Support\Facades\Facade;
-use Infrastructure\FileService;
+use infrastructure\FileService;
 
 class FileFacade extends Facade{
 

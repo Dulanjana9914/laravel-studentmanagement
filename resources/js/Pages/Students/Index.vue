@@ -56,7 +56,7 @@ export default {
                                 <div class="grid grid-cols-1 mt-10 gap-x-6 gap-y-8 sm:grid-cols-6">
                                     <div class="sm:col-span-2">
                                         <label for="name"
-                                            class="block text-sm font-medium leading-6 text-gray-900">Name</label>
+                                            class="block text-lg font-medium leading-6 text-gray-900">Name</label>
                                         <div class="mt-2">
                                             <div
                                                 class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
@@ -68,7 +68,7 @@ export default {
                                     </div>
                                     <div class="sm:col-span-2">
                                         <label for="age"
-                                            class="block text-sm font-medium leading-6 text-gray-900">Age</label>
+                                            class="block text-lg font-medium leading-6 text-gray-900">Age</label>
                                         <div class="mt-2">
                                             <div
                                                 class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
@@ -80,23 +80,24 @@ export default {
                                     </div>
                                     <div class="max-w-sm max-h-30 col-span-full">
                                         <label for="file-upload"
-                                            class="block text-sm font-medium leading-6 text-gray-900">Add Image</label>
-                                        <input id="file-upload" name="file-upload"
-                                            @input="student.image = $event.target.files[0]" v-models="student.image"
-                                            type="file" class="sr-only" />
+                                            class="block text-lg font-medium leading-6 text-gray-900">Add Image</label>
+                                        <input name="image" @input="student.image= $event.target.files[0]" v-models="student.image" id="image" type="file">
+                                        <!-- <input id="image" name="image" @input="student.image = $event.target.files[0]"
+                                            v-models="student.image"
+                                            class="sr-only" type="file" />
                                         <div
                                             class="flex justify-center px-6 py-10 mt-2 border border-dashed rounded-lg border-gray-900/25">
                                             <div class="text-center">
                                                 <div class="flex mt-4 text-sm leading-6 text-gray-600">
-                                                    <label for="file-upload"
+                                                    <label for="image"
                                                         class="relative font-semibold text-indigo-600 bg-white rounded-md cursor-pointer focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
                                                         <span>Click Here to Upload an image</span>
                                                     </label>
                                                 </div>
                                                 <p class="mt-1 text-xs leading-5 text-gray-600">PNG,JPEG or JPG </p>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-6">
+                                        </div> -->
+                                        <div class="mt-4 col-lg-6">
                                             <button type="submit"
                                                 class="pt-2 pb-2 pl-3 pr-3 mt-3 font-bold text-white bg-green-600 border border-green-600 rounded">Add
                                                 Student</button>
@@ -157,7 +158,7 @@ export default {
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td>{{ student.image }}</td>
+                                                    <td><img :src="student.image" /></td>
                                                     <td class="px-6 py-4 whitespace-nowrap">
                                                         <div class="text-sm text-gray-900">{{ student.age }}</div>
                                                     </td>

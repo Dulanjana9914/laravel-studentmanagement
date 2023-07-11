@@ -1,14 +1,14 @@
 <?php
 
-namespace infrastructure\Facade;
+namespace infrastructure\Facades;
 use Illuminate\Support\Facades\Facade;
-use Infrastructure\ImageService;
+use infrastructure\Images;
 
 class ImagesFacade extends Facade{
 
     protected static function getFacadeAccessor(){
 
-        return ImageService::class;
+        return Images::class;
     }
 
 
