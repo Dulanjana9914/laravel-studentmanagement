@@ -1,46 +1,3 @@
-<script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
-import { router } from '@inertiajs/vue3'
-
-export default {
-
-    components: {
-        AuthenticatedLayout
-
-    },
-
-    props: {
-        students: Array,
-
-    },
-
-    data() {
-        return {
-            student: {
-                name: '',
-                age: '',
-                image: '',
-            }
-        }
-    },
-
-    methods:
-    {
-        submit() {
-            router.post(route('students.add'), this.student);
-
-            this.student.name = '';
-            this.student.age = '';
-            this.student.image = '';
-        }
-
-    }
-
-
-}
-</script>
-
 <template>
     <Head title="Students" />
     <AuthenticatedLayout>
@@ -79,9 +36,12 @@ export default {
                                         </div>
                                     </div>
                                     <div class="max-w-sm max-h-30 col-span-full">
-                                        <label for="file-upload"
-                                            class="block text-lg font-medium leading-6 text-gray-900">Add Image</label>
-                                        <input name="image" @input="student.image= $event.target.files[0]" v-models="student.image" id="image" type="file">
+                                        <div class="max-w-sm max-h-30 col-span-full">
+                                            <label for="image" class="block text-lg font-medium leading-6 text-gray-900">Add
+                                                Image</label>
+                                            <input name="image" @input="student.image = $event.target.files[0]"
+                                                v-models="student.image" id="image" type="file">
+                                        </div>
                                         <!-- <input id="image" name="image" @input="student.image = $event.target.files[0]"
                                             v-models="student.image"
                                             class="sr-only" type="file" />
@@ -147,7 +107,7 @@ export default {
                                                 </tr>
                                             </thead>
                                             <tbody class="bg-white divide-y divide-gray-200">
-                                                <tr v-for="student in students">
+                                                <tr v-for="student in students" :key="student.id">
                                                     <th scope="row">{{ student.id }}</th>
                                                     <td class="px-6 py-4 whitespace-nowrap">
                                                         <div class="flex items-center">
@@ -158,24 +118,40 @@ export default {
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td><img :src="student.image" /></td>
+                                                    <td class="px-6 py-4 whitespace-nowrap" v-if="student.image">
+                                                        <img :src="student.image" class="w-12 h-12 rounded" />
+                                                    </td>
+                                                    <td v-else>
+                                                        No Image
+                                                    </td>
                                                     <td class="px-6 py-4 whitespace-nowrap">
                                                         <div class="text-sm text-gray-900">{{ student.age }}</div>
                                                     </td>
                                                     <td class="px-6 py-4 whitespace-nowrap">
-                                                        <span
+                                                        <span v-if="student.status == 'active'"
                                                             class="inline-flex px-2 text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full">
                                                             {{ student.status }}
                                                         </span>
+                                                        <span v-else
+                                                        class="inline-flex px-2 text-xs font-semibold leading-5 text-red-800 bg-red-100 rounded-full">
+                                                        {{ student.status }}
+                                                    </span>
                                                     </td>
                                                     <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                                                         <div class="flex">
-                                                            <button type="button"
-                                                                class="px-3 py-1 mr-2 text-yellow-600 border border-yellow-600 rounded hover:text-yellow-700">
-                                                                Change Status
+                                                            <button @click.prevent="updateStatus(student.id)"
+                                                                class="px-5 py-1 mr-3 text-green-600 border border-green-600 rounded hover:text-green-700"
+                                                                v-if="student.status == 'inactive'">
+                                                                Activate
                                                             </button>
+                                                            <button @click.prevent="updateStatus(student.id)"
+                                                                class="px-3 py-1 mr-3 text-red-600 border border-red-600 rounded hover:text-red-700"
+                                                                v-else>
+                                                                Deactivate
+                                                            </button>
+
                                                             <button type="button"
-                                                                class="px-3 py-1 mr-2 text-indigo-600 border border-indigo-600 rounded hover:text-indigo-900">
+                                                                class="px-3 py-1 mr-3 text-indigo-600 border border-indigo-600 rounded hover:text-indigo-900">
                                                                 Edit
                                                             </button>
                                                             <button type="button"
@@ -188,17 +164,77 @@ export default {
                                             </tbody>
                                         </table>
                                     </div>
+                                    <!-- End of Display All Students -->
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- End of Display All Students -->
-
                 </div>
             </div>
         </template>
     </AuthenticatedLayout>
 </template>
+
+<script>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head } from '@inertiajs/vue3';
+import { router, Link } from '@inertiajs/vue3'
+
+export default {
+
+    components: {
+        AuthenticatedLayout
+
+    },
+
+    props: {
+        students: Array
+
+    },
+
+    data() {
+        return {
+            student: {
+                name: '',
+                age: '',
+                image: '',
+            },
+
+            editStDetails: {
+                name: '',
+                age: '',
+            }
+        }
+    },
+    methods: {
+        submit() {
+            router.post(route('students.add'), this.student);
+
+            this.student.name = ''
+            this.student.age = ''
+            this.student.image = ''
+        },
+        async deleteStudent(id) {
+            await axios.delete(route('students.delete', id))
+        },
+        async updateStatus(id) {
+            await axios.get(route('students.updatestatus', id))
+        },
+        async editStudent(id) {
+            const student = (await axios.get(route('students.get', id))).data
+            this.editStDetails = student
+            $('#updatemodal').modal('show')
+        },
+        async studentUpdate() {
+            await axios.post(route('students.update', this.editStDetails.id), this.editStDetails)
+            $('#updatemodal').modal('hide')
+        }
+
+    }
+
+
+}
+</script>
 <style>
 .bg-gradient-to-b {
     background-image: linear-gradient(to bottom, rgba(103, 58, 183, 1), rgba(233, 30, 99, 1), rgba(255, 0, 0, 1));

@@ -24,11 +24,54 @@ class StudentService
 
     }
 
-
     public function all()
     {
-
         return $this->student->all();
 
     }
+    public function allActive()
+    {
+        return $this->student->where('status', 'active')->get();
+    }
+    public function delete($student_id)
+    {
+
+        $student = $this->student->find($student_id);
+
+        $student->delete();
+
+    }
+
+    public function statusUpdate($student_id)
+    {
+
+        $student = $this->student->find($student_id);
+
+        if($student->status == "active")
+        {
+            $student->status = "inactive";
+        }
+        else
+        {
+            $student->status = "active";
+        }
+        $student->update();
+       
+
+    }
+
+    public function update(array $data,$student_id)
+    {
+
+        $student = $this->student->find($student_id);
+
+        $student->update($this->edit($student, $data));
+
+    }
+
+    protected function edit(Student $student, $data)
+    {
+        return array_merge($student->toArray(), $data);
+    }
+
 }
