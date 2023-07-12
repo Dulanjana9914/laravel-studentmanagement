@@ -6,68 +6,67 @@ use App\Models\Student;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use domain\Facades\StudentFacade;
+use infrastructure\Facades\ImagesFacade;
 
-class StudentController extends ParentController
+class StudentController extends Controller
 {
     public function index()
     {
         return Inertia::render('Students/Index', [
-            'students' => StudentFacade::all()->map(function ($student) {
+            'students' => Student::all()->map(function ($student) {
                 return [
                     'id' => $student->id,
                     'name' => $student->name,
                     'age' => $student->age,
-                    'image' => asset('students/'.$student->image),
+                    'image' => asset('storage/app/public' . $student->image),
                     'status' => $student->status,
                 ];
             }),
-          ]);
+        ]);
     }
 
     public function store(Request $request)
     {
-        $image=Request()->file('image')->store();
+
+        $image = Request()->file('image')->store('images', 'public');
         Student::create([
             'name' => $request->name,
             'age' => $request->age,
-            'image'=> $image
-
+            'image' => $image
         ]);
-        return back();
+        return redirect()->back();
     }
     public function delete($student_id)
     {
         return StudentFacade::delete($student_id);
     }
 
-
-
     public function statusUpdate($student_id)
     {
-
-        StudentFacade::statusUpdate($student_id);
-        return redirect()->back();
-
+        return StudentFacade::statusUpdate($student_id);
     }
 
     public function get($student_id)
     {
         $student = StudentFacade::get($student_id);
         return response()->json($student);
-
     }
 
     public function edit(Request $request)
     {
-        $response ['students'] = StudentFacade::get($request['student_id']);
+        $response['students'] = StudentFacade::get($request['student_id']);
 
-        return view ('pages.studens.edit')->with($response);
+        return view('pages.studens.edit')->with($response);
     }
 
-    public function update(Request $request,$student_id)
+    public function update(Request $request, $student_id)
     {
-        return StudentFacade::update($request->all (),$student_id);
-
+        return StudentFacade::update($request->all(), $student_id);
     }
 
+    public function list()
+    {
+        $students = StudentFacade::all();
+        return response()->json($students);
+    }
 }

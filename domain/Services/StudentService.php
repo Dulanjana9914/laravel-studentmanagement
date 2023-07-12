@@ -14,32 +14,31 @@ class StudentService
         $this->student = new Student();
     }
 
-     public function store($data)
+    public function store($data)
     {
-        if(isset($data['image'])){
-        $image = ImagesFacade::store($data['image'],[1,2,3,4,5]);
-        $data['image'] = $image['created_images']->id;
+        if (isset($data['image'])) {
+            $image = ImagesFacade::store($data['image'], [1, 2, 3, 4, 5]);
+            $data['image'] = $image['created_images']->id;
         }
-         $this->student->create($data);
-
+        $this->student->create($data);
     }
 
     public function all()
     {
         return $this->student->all();
+    }
 
-    }
-    public function allActive()
-    {
-        return $this->student->where('status', 'active')->get();
-    }
     public function delete($student_id)
     {
 
         $student = $this->student->find($student_id);
 
         $student->delete();
+    }
 
+    public function get($student_id)
+    {
+        return $this->student->find($student_id);
     }
 
     public function statusUpdate($student_id)
@@ -47,31 +46,24 @@ class StudentService
 
         $student = $this->student->find($student_id);
 
-        if($student->status == "active")
-        {
+        if ($student->status == "active") {
             $student->status = "inactive";
-        }
-        else
-        {
+        } else {
             $student->status = "active";
         }
         $student->update();
-       
-
     }
 
-    public function update(array $data,$student_id)
+    public function update(array $data, $student_id)
     {
 
         $student = $this->student->find($student_id);
 
         $student->update($this->edit($student, $data));
-
     }
 
     protected function edit(Student $student, $data)
     {
         return array_merge($student->toArray(), $data);
     }
-
 }

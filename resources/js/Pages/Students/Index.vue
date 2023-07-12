@@ -77,11 +77,11 @@
                             <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                                 <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                                     <div class="overflow-hidden border-b border-gray-200 shadow sm:rounded-lg">
-                                        <table class="min-w-full divide-y divide-gray-200">
+                                        <table class="min-w-full pl-8 divide-y divide-gray-200">
                                             <thead class="bg-gray-50">
                                                 <tr>
                                                     <th scope="col"
-                                                        class="px-6 py-3 text-xs font-medium tracking-wide text-left text-gray-500 uppercase">
+                                                        class="px-6 py-3 pl-8 text-xs font-medium tracking-wide text-left text-gray-500 uppercase">
                                                         ID
                                                     </th>
                                                     <th scope="col"
@@ -107,9 +107,9 @@
                                                 </tr>
                                             </thead>
                                             <tbody class="bg-white divide-y divide-gray-200">
-                                                <tr v-for="student in students" :key="student.id">
+                                                <tr v-for="student in student_list" :key="student.id">
                                                     <th scope="row">{{ student.id }}</th>
-                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                    <td class="py-4 whitespace-nowrap">
                                                         <div class="flex items-center">
                                                             <div class="ml-4">
                                                                 <div class="text-sm font-medium text-gray-900">{{
@@ -133,9 +133,9 @@
                                                             {{ student.status }}
                                                         </span>
                                                         <span v-else
-                                                        class="inline-flex px-2 text-xs font-semibold leading-5 text-red-800 bg-red-100 rounded-full">
-                                                        {{ student.status }}
-                                                    </span>
+                                                            class="inline-flex px-2 text-xs font-semibold leading-5 text-red-800 bg-red-100 rounded-full">
+                                                            {{ student.status }}
+                                                        </span>
                                                     </td>
                                                     <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                                                         <div class="flex">
@@ -150,11 +150,13 @@
                                                                 Deactivate
                                                             </button>
 
-                                                            <button type="button"
+                                                            <button @click.prevent="editStudent(student.id)"
+                                                                data-bs-toggle="modal" data-bs-target="#updatemodal"
                                                                 class="px-3 py-1 mr-3 text-indigo-600 border border-indigo-600 rounded hover:text-indigo-900">
                                                                 Edit
                                                             </button>
-                                                            <button type="button"
+                                                            <!-- <Link @click.prevent="editStudent(student.id)" type="button" data-bs-toggle="modal" data-bs-target="#updatemodal"><i class="fas fa-user-edit ms-3 icon" style="color: #0844aa;"></i></Link> -->
+                                                            <button @click.prevent="deleteStudent(student.id)"
                                                                 class="px-3 py-1 text-red-600 border border-red-600 rounded hover:text-red-900">
                                                                 Delete
                                                             </button>
@@ -164,11 +166,49 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <!-- End of Display All Students -->
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <!-- End of Display All Students -->
+
+                    <!-- Edit Model -->
+                    <div class="modal fade" id="updatemodal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
+                        tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Studnt Details
+                                    </h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+
+                                <div class="modal-body">
+
+                                    <form @submit.prevent="studentUpdate">
+
+                                        <div class="gap-3 row d-grid">
+                                            <div class="form-floating">
+                                                <input name="name" type="text" v-model="editStDetails.name"
+                                                    class="form-control" id="floatingPassword" placeholder="Student Name">
+                                                <label class="label" for="floatingPassword">Name</label>
+                                            </div>
+                                            <div class="form-floating">
+                                                <input name="age" type="text" v-model="editStDetails.age"
+                                                    class="form-control" id="floatingPassword" placeholder="Age">
+                                                <label class="label" for="floatingPassword">Age</label>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <button type="submit" class="btn btn-primary">Update</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End of Edit Model -->
                 </div>
             </div>
         </template>
@@ -199,6 +239,7 @@ export default {
                 age: '',
                 image: '',
             },
+            student_list: [],
 
             editStDetails: {
                 name: '',
@@ -206,27 +247,40 @@ export default {
             }
         }
     },
-    methods: {
-        submit() {
-            router.post(route('students.add'), this.student);
+    beforeMount() {
+        this.getData();
 
+    },
+    methods: {
+        async submit() {
+            router.post(route('students.add'), this.student)
+            window.location.reload();
             this.student.name = ''
             this.student.age = ''
             this.student.image = ''
+
+
         },
+        async getData() {
+            const response = (await axios.get(route('students.list'))).data;
+            this.student_list = response;
+        },
+
         async deleteStudent(id) {
-            await axios.delete(route('students.delete', id))
+            await axios.get(route('students.delete', id));
+            this.getData();
         },
         async updateStatus(id) {
-            await axios.get(route('students.updatestatus', id))
+            await axios.get(route('students.updatestatus', id));
+            this.getData();
         },
         async editStudent(id) {
             const student = (await axios.get(route('students.get', id))).data
-            this.editStDetails = student
+            this.editStDetails = student;
             $('#updatemodal').modal('show')
         },
         async studentUpdate() {
-            await axios.post(route('students.update', this.editStDetails.id), this.editStDetails)
+            await axios.post(route('students.update', this.editStDetails.id), this.editStDetails);
             $('#updatemodal').modal('hide')
         }
 
@@ -235,7 +289,7 @@ export default {
 
 }
 </script>
-<style>
+<style lang="css" scoped>
 .bg-gradient-to-b {
     background-image: linear-gradient(to bottom, rgba(103, 58, 183, 1), rgba(233, 30, 99, 1), rgba(255, 0, 0, 1));
 }
