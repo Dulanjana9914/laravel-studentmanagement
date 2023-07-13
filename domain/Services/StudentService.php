@@ -60,6 +60,8 @@ class StudentService
         $student = $this->student->find($student_id);
 
         $student->update($this->edit($student, $data));
+
+        return redirect()->back();
     }
 
     protected function edit(Student $student, $data)

@@ -52,16 +52,15 @@ class StudentController extends Controller
         return response()->json($student);
     }
 
-    public function edit(Request $request)
+    public function edit()
     {
-        $response['students'] = StudentFacade::get($request['student_id']);
-
-        return view('pages.studens.edit')->with($response);
+        return Inertia::render('Students/Update');
     }
 
     public function update(Request $request, $student_id)
     {
-        return StudentFacade::update($request->all(), $student_id);
+        StudentFacade::update($request->all(), $student_id);
+        return redirect()->back();
     }
 
     public function list()

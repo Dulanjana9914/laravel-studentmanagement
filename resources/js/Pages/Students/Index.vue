@@ -42,21 +42,6 @@
                                             <input name="image" @input="student.image = $event.target.files[0]"
                                                 v-models="student.image" id="image" type="file">
                                         </div>
-                                        <!-- <input id="image" name="image" @input="student.image = $event.target.files[0]"
-                                            v-models="student.image"
-                                            class="sr-only" type="file" />
-                                        <div
-                                            class="flex justify-center px-6 py-10 mt-2 border border-dashed rounded-lg border-gray-900/25">
-                                            <div class="text-center">
-                                                <div class="flex mt-4 text-sm leading-6 text-gray-600">
-                                                    <label for="image"
-                                                        class="relative font-semibold text-indigo-600 bg-white rounded-md cursor-pointer focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
-                                                        <span>Click Here to Upload an image</span>
-                                                    </label>
-                                                </div>
-                                                <p class="mt-1 text-xs leading-5 text-gray-600">PNG,JPEG or JPG </p>
-                                            </div>
-                                        </div> -->
                                         <div class="mt-4 col-lg-6">
                                             <button type="submit"
                                                 class="pt-2 pb-2 pl-3 pr-3 mt-3 font-bold text-white bg-green-600 border border-green-600 rounded">Add
@@ -149,13 +134,13 @@
                                                                 v-else>
                                                                 Deactivate
                                                             </button>
-
-                                                            <button @click.prevent="editStudent(student.id)"
+                                                            <Link href="/students/update"
+                                                                @click.prevent="editStudent(student.id)"
                                                                 data-bs-toggle="modal" data-bs-target="#updatemodal"
                                                                 class="px-3 py-1 mr-3 text-indigo-600 border border-indigo-600 rounded hover:text-indigo-900">
-                                                                Edit
-                                                            </button>
-                                                            <!-- <Link @click.prevent="editStudent(student.id)" type="button" data-bs-toggle="modal" data-bs-target="#updatemodal"><i class="fas fa-user-edit ms-3 icon" style="color: #0844aa;"></i></Link> -->
+                                                            Edit
+                                                            </Link>
+
                                                             <button @click.prevent="deleteStudent(student.id)"
                                                                 class="px-3 py-1 text-red-600 border border-red-600 rounded hover:text-red-900">
                                                                 Delete
@@ -171,44 +156,6 @@
                         </div>
                     </div>
                     <!-- End of Display All Students -->
-
-                    <!-- Edit Model -->
-                    <div class="modal fade" id="updatemodal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
-                        tabindex="-1">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Studnt Details
-                                    </h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-
-                                <div class="modal-body">
-
-                                    <form @submit.prevent="studentUpdate">
-
-                                        <div class="gap-3 row d-grid">
-                                            <div class="form-floating">
-                                                <input name="name" type="text" v-model="editStDetails.name"
-                                                    class="form-control" id="floatingPassword" placeholder="Student Name">
-                                                <label class="label" for="floatingPassword">Name</label>
-                                            </div>
-                                            <div class="form-floating">
-                                                <input name="age" type="text" v-model="editStDetails.age"
-                                                    class="form-control" id="floatingPassword" placeholder="Age">
-                                                <label class="label" for="floatingPassword">Age</label>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <button type="submit" class="btn btn-primary">Update</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- End of Edit Model -->
                 </div>
             </div>
         </template>
@@ -223,7 +170,8 @@ import { router, Link } from '@inertiajs/vue3'
 export default {
 
     components: {
-        AuthenticatedLayout
+        AuthenticatedLayout,
+        Link
 
     },
 
@@ -267,7 +215,7 @@ export default {
         },
 
         async deleteStudent(id) {
-            await axios.get(route('students.delete', id));
+            await axios.delete(route('students.delete', id));
             this.getData();
         },
         async updateStatus(id) {
@@ -277,13 +225,10 @@ export default {
         async editStudent(id) {
             const student = (await axios.get(route('students.get', id))).data
             this.editStDetails = student;
-            $('#updatemodal').modal('show')
-        },
-        async studentUpdate() {
-            await axios.post(route('students.update', this.editStDetails.id), this.editStDetails);
-            $('#updatemodal').modal('hide')
-        }
+            localStorage.setItem('student', JSON.stringify(student));
 
+
+        }
     }
 
 

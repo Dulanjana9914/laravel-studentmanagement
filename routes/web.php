@@ -39,11 +39,11 @@ Route::middleware('auth')->group(function () {
 //students
 Route::prefix('/students')->group(function () {
     Route::get('/', [StudentController::class, 'index'])->name('students');
+    Route::get('/update', [StudentController::class, 'edit'])->name('students.edit');
     Route::get('/list', [StudentController::class, 'list'])->name('students.list');
     Route::post('/add', [StudentController::class, 'store'])->name('students.add');
-    Route::get('/{student_id}/delete', [StudentController::class, 'delete'])->name('students.delete');
+    Route::delete('/{student_id}/delete', [StudentController::class, 'delete'])->name('students.delete');
     Route::get('/{student_id}/get', [StudentController::class, 'get'])->name('students.get');
-    Route::get('/{student_id}/edit', [StudentController::class, 'edit'])->name('students.edit');
     Route::post('/{student_id}/update', [StudentController::class, 'update'])->name('students.update');
     Route::get('/{student_id}/statusUpdate', [StudentController::class, 'statusUpdate'])->name('students.updatestatus');
     Route::get('/{student_id}/statusUpdateactive', [StudentController::class, 'statusUpdateActive'])->name('students.statusUpdateactive');
